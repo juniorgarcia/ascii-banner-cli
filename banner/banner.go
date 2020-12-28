@@ -18,6 +18,16 @@ type Banner struct {
 	Padding    uint8
 }
 
+// HorLineType A banner horizontal line types
+type HorLineType int
+
+const (
+	// HorLineTypeTop the top line of a banner
+	HorLineTypeTop = iota
+	// HorLineTypeBottom the bottom line of a banner
+	HorLineTypeBottom = iota
+)
+
 // NewBanner Creates a new banner instance
 func NewBanner(tlChar, trChar, blChar, brChar, dashesChar, sidesChar rune, message string, padding uint8) Banner {
 	return Banner{
@@ -37,19 +47,54 @@ func NewDefaultBanner(msg string) Banner {
 	return NewBanner('+', '*', '*', '+', '-', '|', msg, 2)
 }
 
-// PrintHorizontalEdges Prints the banner's horizontal edges
-func (b Banner) PrintHorizontalEdges() string {
-	msgLen := len(b.Message)
-	result := fmt.Sprintf("%c%s%c",
-		b.TlChar,
-		strings.Repeat(string(b.DashesChar), msgLen+int(b.Padding)*2),
-		b.TrChar)
+// errInvalidBannerHorLineType Invalid banner horizontal type
+type errInvalidBannerHorLineType int
 
-	return result
+func (e errInvalidBannerHorLineType) Error() string {
+	return fmt.Sprintf("Invalid horizontal line type: %d", e)
+}
+
+// PrintHorizontalEdges Prints the banner's horizontal edges
+func (b Banner) PrintHorizontalEdges(line HorLineType) (string, error) {
+	msgLen := len(b.Message)
+	var lcChar, rcChar rune // left corner and right corner chars
+	switch line {
+	case HorLineTypeTop:
+		lcChar = b.TlChar
+		rcChar = b.TrChar
+	case HorLineTypeBottom:
+		lcChar = b.BlChar
+		rcChar = b.BrChar
+	default:
+		return "", errInvalidBannerHorLineType(line)
+	}
+
+	result := fmt.Sprintf("%c%s%c",
+		lcChar,
+		strings.Repeat(string(b.DashesChar), msgLen+int(b.Padding)*2), rcChar)
+
+	return result, nil
 }
 
 // PrintMiddle Prints the middle of the banner
 func (b Banner) PrintMiddle() string {
 	paddingsRep := strings.Repeat(" ", int(b.Padding))
 	return fmt.Sprintf("%c%s%s%s%c", b.SidesChar, paddingsRep, b.Message, paddingsRep, b.SidesChar)
+}
+
+// PrintFullBanner Prints the complete banner
+func (b Banner) PrintFullBanner() (string, error) {
+	horLineTop, err := b.PrintHorizontalEdges(HorLineTypeTop)
+	if err != nil {
+		return "", err
+	}
+
+	horLineBottom, err := b.PrintHorizontalEdges(HorLineTypeBottom)
+	if err != nil {
+		return "", err
+	}
+
+	middle := b.PrintMiddle()
+
+	return fmt.Sprintf("%s\n%s\n%s", horLineTop, middle, horLineBottom), nil
 }
