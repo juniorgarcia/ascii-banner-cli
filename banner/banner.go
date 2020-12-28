@@ -8,14 +8,14 @@ import (
 
 // Banner The Banner layout properties
 type Banner struct {
-	TlChar     rune // top left char
-	TrChar     rune // top right char
-	BlChar     rune // bottom left char
-	BrChar     rune // bottom right char
-	DashesChar rune
-	SidesChar  rune
-	Message    string
-	Padding    uint8
+	TlChar, // top left char
+	TrChar, // top right char
+	BlChar, // bottom left char
+	BrChar, // bottom right char
+	DashesChar,
+	SidesChar,
+	Message string
+	Padding uint8
 }
 
 // HorLineType A banner horizontal line types
@@ -29,7 +29,7 @@ const (
 )
 
 // NewBanner Creates a new banner instance
-func NewBanner(tlChar, trChar, blChar, brChar, dashesChar, sidesChar rune, message string, padding uint8) Banner {
+func NewBanner(tlChar, trChar, blChar, brChar, dashesChar, sidesChar string, message string, padding uint8) Banner {
 	return Banner{
 		TlChar:     tlChar,
 		TrChar:     trChar,
@@ -42,9 +42,9 @@ func NewBanner(tlChar, trChar, blChar, brChar, dashesChar, sidesChar rune, messa
 	}
 }
 
-//NewDefaultBanner Creates a banner with the default options
+// NewDefaultBanner Creates a banner with the default options
 func NewDefaultBanner(msg string) Banner {
-	return NewBanner('+', '*', '*', '+', '-', '|', msg, 2)
+	return NewBanner("+", "*", "*", "+", "-", "|", msg, 2)
 }
 
 // errInvalidBannerHorLineType Invalid banner horizontal type
@@ -57,7 +57,7 @@ func (e errInvalidBannerHorLineType) Error() string {
 // PrintHorizontalEdges Prints the banner's horizontal edges
 func (b Banner) PrintHorizontalEdges(line HorLineType) (string, error) {
 	msgLen := len(b.Message)
-	var lcChar, rcChar rune // left corner and right corner chars
+	var lcChar, rcChar string // left corner and right corner chars
 	switch line {
 	case HorLineTypeTop:
 		lcChar = b.TlChar
@@ -69,9 +69,9 @@ func (b Banner) PrintHorizontalEdges(line HorLineType) (string, error) {
 		return "", errInvalidBannerHorLineType(line)
 	}
 
-	result := fmt.Sprintf("%c%s%c",
+	result := fmt.Sprintf("%s%s%s",
 		lcChar,
-		strings.Repeat(string(b.DashesChar), msgLen+int(b.Padding)*2), rcChar)
+		strings.Repeat(b.DashesChar, msgLen+int(b.Padding)*2), rcChar)
 
 	return result, nil
 }
@@ -79,7 +79,7 @@ func (b Banner) PrintHorizontalEdges(line HorLineType) (string, error) {
 // PrintMiddle Prints the middle of the banner
 func (b Banner) PrintMiddle() string {
 	paddingsRep := strings.Repeat(" ", int(b.Padding))
-	return fmt.Sprintf("%c%s%s%s%c", b.SidesChar, paddingsRep, b.Message, paddingsRep, b.SidesChar)
+	return fmt.Sprintf("%s%s%s%s%s", b.SidesChar, paddingsRep, b.Message, paddingsRep, b.SidesChar)
 }
 
 // PrintFullBanner Prints the complete banner
