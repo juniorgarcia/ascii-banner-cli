@@ -5,7 +5,7 @@
 ### Install
 
 1. Make sure [Go is installed on your machine](https://golang.org/doc/install#download)
-2. Run on terminal `$ go install https://github.com/juniorgarcia/ascii-banner-cli`
+2. Run on terminal `$ go get https://github.com/juniorgarcia/ascii-banner-cli && go install https://github.com/juniorgarcia/ascii-banner-cli`
 
 ### Usage
 
