@@ -6,6 +6,7 @@
 
 1. Make sure [Go is installed on your machine](https://golang.org/doc/install#download)
 2. Run on terminal `go get github.com/juniorgarcia/ascii-banner-cli && go install github.com/juniorgarcia/ascii-banner-cli`
+3. Be sure the `$GOPATH/bin` is on your `$PATH` variable.
 
 The binary will be available under the name `ascii-banner-cli`
 
