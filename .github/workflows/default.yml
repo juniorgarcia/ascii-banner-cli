@@ -5,12 +5,16 @@ on:
       main
 jobs:
   configure:
+    strategy:
+      matrix:
+        go-version: [ '1.15.x', '1.23.x' ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - name: Setup Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v5
         with:
-          go-version: "^1.23"
+          go-version: ${{ matrix.go-version }}
       - name: Install deps
         run: go mod tidy
       - name: Test
