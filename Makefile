@@ -1,8 +1,12 @@
-build:
-	go build -o ascii-banner
-test:
-	go test ./banner
-test_bench:
-	go test ./banner -bench=.
+build: clean
+	go build -o ./out/ascii-banner ./cmd/...
+build-prod: clean
+	go build -ldflags="-s -w" -o ./out/ascii-banner ./cmd/...
 clean:
-	rm -rf ascii-banner
+	@rm -rf ./out
+format:
+	go fmt ./...
+test:
+	go test ./...
+test-bench:
+	go test ./... -bench=.

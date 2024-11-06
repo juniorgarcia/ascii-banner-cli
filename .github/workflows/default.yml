@@ -1,25 +1,25 @@
-on: pull_request
+on:
+  pull_request:
+  push:
+    branches:
+      main
 jobs:
   configure:
-    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        go-version: [ '1.15', '1.23' ]
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup Go
-        uses: actions/setup-go@v2
+      - uses: actions/checkout@v4
+      - name: Setup Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v5
         with:
-          go-version: "^1.5"
-      - run: go version
-  test:
-    runs-on: ubuntu-20.04
-    needs: configure
-    steps:
-      - uses: actions/checkout@v2
-      - name: Testing lib
+          go-version: '^${{ matrix.go-version }}'
+      - name: Install deps
+        run: go mod tidy
+      - name: Test
         run: make test
-  test_bench:
-    runs-on: ubuntu-20.04
-    needs: configure
-    steps:
-      - uses: actions/checkout@v2
-      - name: Testing with benchmarks
-        run: make test_bench
+      - name: Lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.60.3
