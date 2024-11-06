@@ -28,7 +28,7 @@ func TestPrintHorizontalEdges(t *testing.T) {
 
 func BenchmarkPrintHorizontalEdges(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		NewDefaultBanner("Hello, World").PrintHorizontalEdges(HorLineTypeBottom)
+		_, _ = NewDefaultBanner("Hello, World").PrintHorizontalEdges(HorLineTypeBottom)
 	}
 }
 
@@ -80,7 +80,7 @@ func TestPrintFullBanner(t *testing.T) {
 		b.Message = c.in
 		banner, err := b.PrintFullBanner()
 		if err != nil {
-			t.Errorf("PrintFullBanner() raised an error: %w", err)
+			t.Errorf("PrintFullBanner() raised an error: %+v", err)
 		}
 		if banner != c.out {
 			t.Errorf("PrintFullBanner() expected: \n\"%s\". \n Got: \n\"%s\"", c.out, banner)
@@ -90,6 +90,6 @@ func TestPrintFullBanner(t *testing.T) {
 
 func BenchmarkPrintFullBanner(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		NewDefaultBanner("Hello, world!").PrintFullBanner()
+		_, _ = NewDefaultBanner("Hello, world!").PrintFullBanner()
 	}
 }

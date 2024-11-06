@@ -10,7 +10,7 @@ import (
 	"strconv"
 
 	"github.com/joho/godotenv"
-	"github.com/juniorgarcia/ascii-banner-cli/banner"
+	"github.com/juniorgarcia/ascii-banner-cli/pkg/banner"
 )
 
 const appName = "ASCII Banner Generator"
@@ -37,24 +37,25 @@ INDIVIDUAL_SIDE_PADDING=2
 
 func createConfigFile(f string) error {
 	file, err := os.Create(f)
-	defer file.Close()
 
 	if err != nil {
 		log.Fatalf("Unable to create default config file at %s. Error: %s", f, err)
 		panic(err)
 	}
 
+	defer file.Close()
+
 	if _, err := file.Write(defaultConfigFileContent); err != nil {
 		log.Fatalf("Unable to write to config file: %s", err)
 		panic(err)
 	}
 
-	file.Sync()
+	_ = file.Sync()
 
 	return nil
 }
 
-func checkConfigFile(f string) bool {
+func checkConfigFile() bool {
 	if _, err := os.Stat(configFilePath); errors.Is(err, fs.ErrNotExist) {
 		return false
 	}
@@ -63,7 +64,7 @@ func checkConfigFile(f string) bool {
 }
 
 func main() {
-	if !checkConfigFile(configFilePath) {
+	if !checkConfigFile() {
 		if err := createConfigFile(configFilePath); err != nil {
 			log.Fatal("Unable to create default config file!", err)
 		}
@@ -84,7 +85,7 @@ func main() {
 	d := flag.String("d", os.Getenv("DASHES_CHAR"), "The dashes character")
 	s := flag.String("s", os.Getenv("SIDE_CHAR"), "The sides character")
 
-	padding, err := strconv.Atoi(os.Getenv("INDIVIDUAL_SIDE_PADDING"))
+	padding, _ := strconv.Atoi(os.Getenv("INDIVIDUAL_SIDE_PADDING"))
 
 	p := flag.Int("p", padding, "Individual side padding")
 	h := flag.Bool("h", false, "Show help")
